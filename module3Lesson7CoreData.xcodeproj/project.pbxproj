@@ -6,8 +6,19 @@
 	objectVersion = 77;
 	objects = {
 
+/* Begin PBXBuildFile section */
+		85779AF72FEA7F2E00527D04 /* Folder+CoreDataClass.swift in Sources */ = {isa = PBXBuildFile; fileRef = 85779AF32FEA7F2E00527D04 /* Folder+CoreDataClass.swift */; };
+		85779AF82FEA7F2E00527D04 /* Note+CoreDataClass.swift in Sources */ = {isa = PBXBuildFile; fileRef = 85779AF52FEA7F2E00527D04 /* Note+CoreDataClass.swift */; };
+		85779AF92FEA7F2E00527D04 /* Folder+CoreDataProperties.swift in Sources */ = {isa = PBXBuildFile; fileRef = 85779AF42FEA7F2E00527D04 /* Folder+CoreDataProperties.swift */; };
+		85779AFA2FEA7F2E00527D04 /* Note+CoreDataProperties.swift in Sources */ = {isa = PBXBuildFile; fileRef = 85779AF62FEA7F2E00527D04 /* Note+CoreDataProperties.swift */; };
+/* End PBXBuildFile section */
+
 /* Begin PBXFileReference section */
 		8575AE642FDC8727004C1229 /* module3Lesson7CoreData.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = module3Lesson7CoreData.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		85779AF32FEA7F2E00527D04 /* Folder+CoreDataClass.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Folder+CoreDataClass.swift"; sourceTree = "<group>"; };
+		85779AF42FEA7F2E00527D04 /* Folder+CoreDataProperties.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Folder+CoreDataProperties.swift"; sourceTree = "<group>"; };
+		85779AF52FEA7F2E00527D04 /* Note+CoreDataClass.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Note+CoreDataClass.swift"; sourceTree = "<group>"; };
+		85779AF62FEA7F2E00527D04 /* Note+CoreDataProperties.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Note+CoreDataProperties.swift"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFileSystemSynchronizedRootGroup section */
@@ -32,6 +43,10 @@
 		8575AE5B2FDC8727004C1229 = {
 			isa = PBXGroup;
 			children = (
+				85779AF32FEA7F2E00527D04 /* Folder+CoreDataClass.swift */,
+				85779AF42FEA7F2E00527D04 /* Folder+CoreDataProperties.swift */,
+				85779AF52FEA7F2E00527D04 /* Note+CoreDataClass.swift */,
+				85779AF62FEA7F2E00527D04 /* Note+CoreDataProperties.swift */,
 				8575AE662FDC8727004C1229 /* module3Lesson7CoreData */,
 				8575AE652FDC8727004C1229 /* Products */,
 			);
@@ -119,6 +134,10 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				85779AF72FEA7F2E00527D04 /* Folder+CoreDataClass.swift in Sources */,
+				85779AF82FEA7F2E00527D04 /* Note+CoreDataClass.swift in Sources */,
+				85779AF92FEA7F2E00527D04 /* Folder+CoreDataProperties.swift in Sources */,
+				85779AFA2FEA7F2E00527D04 /* Note+CoreDataProperties.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
