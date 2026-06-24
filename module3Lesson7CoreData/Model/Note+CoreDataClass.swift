@@ -1,16 +1,12 @@
-//
-//  Note+CoreDataProperties.swift
-//  module3Lesson7CoreData
-//
-//  Created by Максим Минаков on 23.06.2026.
-//
-//
-
 public import Foundation
 public import CoreData
 
+public typealias NoteCoreDataClassSet = NSSet
 
-public typealias NoteCoreDataPropertiesSet = NSSet
+@objc(Note)
+public class Note: NSManagedObject {
+
+}
 
 extension Note {
 
@@ -22,10 +18,11 @@ extension Note {
     @NSManaged public var id: String?
     @NSManaged public var image: String?
     @NSManaged public var text: String?
-    @NSManaged public var folder: Folder?
+    @NSManaged public var folder: Folder? // as? [Nones]
 
 }
 
 extension Note : Identifiable {
 
 }
+

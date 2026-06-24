@@ -1,21 +1,30 @@
-//
-//  module3Lesson7CoreDataApp.swift
-//  module3Lesson7CoreData
-//
-//  Created by Максим Минаков on 12.06.2026.
-//
-
 import SwiftUI
-import CoreData
 
 @main
 struct module3Lesson7CoreDataApp: App {
-    let persistenceController = PersistenceController.shared
+
+    lazy var persistentContainer: NSPersistentContainer = {
+        let container = NSPersistentContainer(name: "db")
+        container.loadPersistentStores { _, error in
+            if let error = error {
+                fatalError("Unresolved error \(error)")
+            }
+        }
+        return container
+    }()
+    
+    @StateObject private var coreManager: CoreManager
+
+    init() {
+        _coreManager = StateObject(wrappedValue: CoreManager(container: persistentContainer))
+    }
 
     var body: some Scene {
         WindowGroup {
             ContentView()
-                .environment(\.managedObjectContext, persistenceController.container.viewContext)
+                .environment(\.managedObjectContext, persistentContainer.viewContext)
+                .environmentObject(coreManager)
+            
         }
     }
 }
