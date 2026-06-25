@@ -1,6 +1,8 @@
 import Foundation
 import CoreData
 
+
+
 class CoreManager {
     static let shared = CoreManager()
     private init () {}
@@ -42,14 +44,25 @@ class CoreManager {
         return entity
     }
     
-    // R 
-    func fetchDB<T: NSManagedObject>(_ type: T.Type, sortDescriptor: NSSortDescriptor? = nil) throws -> [T] {
+    // R
+    func fetchDB<T: NSManagedObject>(
+        _ type: T.Type,
+        predicate: NSPredicate? = nil,
+        sortDescriptor: NSSortDescriptor? = nil
+    ) throws -> [T] {
         let request = NSFetchRequest<T>(entityName: String(describing: type))
+        
+        if let predicate = predicate {
+            request.predicate = predicate
+        }
+        
         if let sortDescriptor = sortDescriptor {
             request.sortDescriptors = [sortDescriptor]
         }
+        
         return try viewContext.fetch(request)
     }
+    
     
     // U
     func updateDB<T: NSManagedObject>(_ entity: T, configure: (T) -> Void) throws {
@@ -57,11 +70,9 @@ class CoreManager {
         try saveContext()
     }
     
-    func deleteDB(_ fold: Folder) throws {
-        viewContext.delete(fold)
-        
+    // D
+    func deleteDB(_ object: NSManagedObject) throws {
+        viewContext.delete(object)
         try saveContext()
     }
-    
-    
 }
