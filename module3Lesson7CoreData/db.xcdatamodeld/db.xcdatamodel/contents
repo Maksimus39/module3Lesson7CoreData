@@ -4,7 +4,7 @@
         <attribute name="date" optional="YES" attributeType="Date" usesScalarValueType="NO"/>
         <attribute name="id" optional="YES" attributeType="String"/>
         <attribute name="name" optional="YES" attributeType="String" spotlightIndexingEnabled="YES"/>
-        <relationship name="notes" optional="YES" toMany="YES" deletionRule="Nullify" destinationEntity="Note" inverseName="folder" inverseEntity="Note"/>
+        <relationship name="notes" optional="YES" toMany="YES" deletionRule="Cascade" destinationEntity="Note" inverseName="folder" inverseEntity="Note"/>
     </entity>
     <entity name="Note" representedClassName="Note" syncable="YES">
         <attribute name="date" optional="YES" attributeType="String"/>

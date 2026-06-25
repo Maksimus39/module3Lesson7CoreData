@@ -1,85 +1,67 @@
 import Foundation
 import CoreData
-import Combine
 
-class CoreManager: ObservableObject {
-    let container: NSPersistentContainer
+class CoreManager {
+    static let shared = CoreManager()
+    private init () {}
     
-    @Published var folders: [Folder] = []
-    
-    init(container: NSPersistentContainer) {
-        self.container = container
-        fetchAllFolders()
-    }
+    lazy var persistentContainer: NSPersistentContainer = {
+        let container = NSPersistentContainer(name: "db")
+        container.loadPersistentStores { _, error in
+            if let error = error {
+                print("Unresolved error \(error)")
+            }
+        }
+        return container
+    }()
     
     var viewContext: NSManagedObjectContext {
-        container.viewContext
+        persistentContainer.viewContext
     }
     
     
-    func createFolder(name: String) {
-        let folder = Folder(context: viewContext)
-        folder.id = UUID().uuidString
-        folder.name = name
-        folder.date = Date()
-        
-        saveContext()
-        fetchAllFolders()
-    }
-    
-    func addNote(to folder: Folder, text: String, image: String? = nil) {
-        let note = Note(context: viewContext)
-        note.id = UUID().uuidString
-        note.text = text
-        note.image = image
-        note.date = Date().description
-        note.folder = folder
-        
-        saveContext()
-    }
-    
-    func fetchAllFolders() {
-        let request: NSFetchRequest<Folder> = Folder.fetchRequest()
-        request.sortDescriptors = [NSSortDescriptor(keyPath: \Folder.date, ascending: false)]
-        
-        do {
-            self.folders = try viewContext.fetch(request)
-        } catch {
-            print("Ошибка загрузки папок: \(error.localizedDescription)")
-        }
-    }
-    
-    func updateFolder(_ folder: Folder, newName: String) {
-        folder.name = newName
-        folder.date = Date()
-        saveContext()
-        fetchAllFolders()
-    }
-    
-    func updateNote(_ note: Note, newText: String) {
-        note.text = newText
-        saveContext()
-    }
-    
-    
-    func deleteFolder(_ folder: Folder) {
-        viewContext.delete(folder)
-        saveContext()
-        fetchAllFolders()
-    }
-    
-    func deleteNote(_ note: Note) {
-        viewContext.delete(note)
-        saveContext()
-    }
-    
-    private func saveContext() {
-        if viewContext.hasChanges {
+    func saveContext() throws {
+        let contex = viewContext
+        if contex.hasChanges {
             do {
-                try viewContext.save()
+                try contex.save()
             } catch {
-                print("Ошибка сохранения: \(error.localizedDescription)")
+                let nsError = error as NSError
+                print("Unresolved error: \(nsError), \(nsError.userInfo)")
+                // Здесь можно добавить обработку ошибки, например, показать alert во View
             }
         }
     }
+    
+    // C
+    func createDB<T: NSManagedObject>(_ type: T.Type, configure: (T) -> Void) throws -> T {
+        let entity = T(context: viewContext)
+        configure(entity)
+        try saveContext()
+        
+        return entity
+    }
+    
+    // R 
+    func fetchDB<T: NSManagedObject>(_ type: T.Type, sortDescriptor: NSSortDescriptor? = nil) throws -> [T] {
+        let request = NSFetchRequest<T>(entityName: String(describing: type))
+        if let sortDescriptor = sortDescriptor {
+            request.sortDescriptors = [sortDescriptor]
+        }
+        return try viewContext.fetch(request)
+    }
+    
+    // U
+    func updateDB<T: NSManagedObject>(_ entity: T, configure: (T) -> Void) throws {
+        configure(entity)
+        try saveContext()
+    }
+    
+    func deleteDB(_ fold: Folder) throws {
+        viewContext.delete(fold)
+        
+        try saveContext()
+    }
+    
+    
 }
