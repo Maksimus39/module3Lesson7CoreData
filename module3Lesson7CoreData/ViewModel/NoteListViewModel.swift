@@ -4,9 +4,17 @@ import CoreData
 
 
 
-@Observable final class NoteListViewModel {
+protocol NoteListViewModelProtocol: AnyObject {
+    func addNote(text: String, image: String?)
+    func loadNotes()
+    func updateNote(_ note: Note, newText: String, newImage: String?)
+    func deleteNote(_ note: Note)
+}
+
+
+@Observable final class NoteListViewModel: NoteListViewModelProtocol {
     private let coreManager: CoreManager
-    private let folder: Folder 
+    private let folder: Folder
     
     var notes: [Note] = []
     var errorMessage: String?
@@ -62,12 +70,22 @@ import CoreData
         }
     }
     
-    // Delete
-    func deleteDB(_ note: Folder) throws {
-        try coreManager.deleteDB(note)
+    // Update Note Text 
+    func updateNoteText(_ note: Note, newText: String) {
+        updateNote(note, newText: newText, newImage: note.image)
     }
     
-    private func handleError(_ error: Error) {
+    // Delete
+    func deleteNote(_ note: Note) {
+        do {
+            try coreManager.deleteDB(note)
+            loadNotes()
+        } catch {
+            handleError(error)
+        }
+    }
+    
+    func handleError(_ error: Error) {
         errorMessage = error.localizedDescription
         showError = true
     }

@@ -3,14 +3,21 @@ import Observation
 import CoreData
 
 
+protocol ContentViewModelProtocol: AnyObject {
+    func createFolder(titleFolder: String)
+    func loadFolder()
+    func updateFolder(_ folder: Folder, newName: String)
+    func deleteFolder(_ folder: Folder)
+}
 
-@Observable final class ContentViewModel {
+@Observable final class ContentViewModel: ContentViewModelProtocol {
     private let coreManager: CoreManager
     
     var folders: [Folder] = []
     var errorMessage: String?
     var showError: Bool = false
     var updateCounter: Int = 0
+    
     
     init(coreManager: CoreManager = .shared) {
         self.coreManager = coreManager

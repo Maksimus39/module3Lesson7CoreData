@@ -30,7 +30,6 @@ class CoreManager {
             } catch {
                 let nsError = error as NSError
                 print("Unresolved error: \(nsError), \(nsError.userInfo)")
-                // Здесь можно добавить обработку ошибки, например, показать alert во View
             }
         }
     }
