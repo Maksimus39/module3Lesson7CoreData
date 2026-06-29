@@ -17,7 +17,7 @@ struct NoteListView: View {
     init(folderModel: FolderModel) {
         self.folderModel = folderModel
         _ = NoteListViewModel(folder: folderModel)
-        self._viewModel = State(wrappedValue: Assembly.createNoteListViewModel(folder: folderModel))
+        self._viewModel = State(wrappedValue: Assembly.shared.createNoteListViewModel(folder: folderModel))
     }
     
     var body: some View {

@@ -3,7 +3,13 @@ import UIKit
 
 
 
-class StorageManager {
+protocol StorageManagerProtocol: AnyObject {
+    func saveImage(data: Data) -> String?
+    func loadImage(fileName: String?) -> UIImage?
+}
+
+
+class StorageManager: StorageManagerProtocol {
     static let shared = StorageManager()
     private init() {}
     

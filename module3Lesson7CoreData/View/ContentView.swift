@@ -2,7 +2,7 @@ import SwiftUI
 
 
 struct ContentView: View {
-    @State private var viewModel = Assembly.createContentViewModel()
+    @State private var viewModel = Assembly.shared.createContentViewModel()
     
     // Флаги и данные для создания
     @State private var isAddingFolder = false

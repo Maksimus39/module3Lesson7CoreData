@@ -2,9 +2,15 @@ import Foundation
 import Observation
 
 
+protocol NoteListViewModelProtocol: AnyObject {
+    func addNote(text: String, imageFileName: String?)
+    func loadNotes()
+    func updateNoteText(_ noteModel: NoteModel, newText: String)
+    func deleteNote(_ noteModel: NoteModel)
+}
 
 
-@Observable final class NoteListViewModel {
+@Observable final class NoteListViewModel: NoteListViewModelProtocol {
     private let coreManager: CoreManager
     
     private let folderId: String
