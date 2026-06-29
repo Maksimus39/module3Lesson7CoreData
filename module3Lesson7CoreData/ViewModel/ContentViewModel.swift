@@ -3,80 +3,64 @@ import Observation
 import CoreData
 
 
-protocol ContentViewModelProtocol: AnyObject {
-    func createFolder(titleFolder: String)
-    func loadFolder()
-    func updateFolder(_ folder: Folder, newName: String)
-    func deleteFolder(_ folder: Folder)
-}
 
-@Observable final class ContentViewModel: ContentViewModelProtocol {
+@Observable final class ContentViewModel {
+    
     private let coreManager: CoreManager
     
-    var folders: [Folder] = []
+    var folders: [FolderModel] = []
     var errorMessage: String?
     var showError: Bool = false
-    var updateCounter: Int = 0
-    
     
     init(coreManager: CoreManager = .shared) {
         self.coreManager = coreManager
-        loadFolder()
+        loadFolders()
     }
     
-    
-    // Create
     func createFolder(titleFolder: String) {
         do {
-            _ = try coreManager.createDB(Folder.self) {
-                $0.id = UUID().uuidString
-                $0.date = Date()
-                $0.name = titleFolder
+            try coreManager.createFolder(name: titleFolder)
+            loadFolders()
+        } catch {
+            handleError(error)
+        }
+    }
+    
+    func loadFolders() {
+        do {
+            folders = try coreManager.fetchFolders()
+        } catch {
+            handleError(error)
+        }
+    }
+    
+    func updateFolder(_ folderModel: FolderModel, newName: String) {
+        do {
+            let request = NSFetchRequest<Folder>(entityName: "Folder")
+            request.predicate = NSPredicate(format: "id == %@", folderModel.id)
+            if (try coreManager.viewContext.fetch(request).first) != nil {
+                try coreManager.updateFolder(id: folderModel.id, newName: newName)
+                loadFolders()
             }
-            loadFolder()
         } catch {
             handleError(error)
         }
     }
     
-    // Read
-    func loadFolder() {
+    func deleteFolder(_ folderModel: FolderModel) {
         do {
-            let sortDescriptor = NSSortDescriptor(keyPath: \Folder.date, ascending: false)
-            folders = try coreManager.fetchDB(Folder.self, sortDescriptor: sortDescriptor)
-            
-            updateCounter += 1
-        } catch {
-            handleError(error)
-        }
-    }
-    
-    
-    // Update
-    func updateFolder(_ folder: Folder, newName: String) {
-        do {
-            try coreManager.updateDB(folder) {
-                $0.name = newName
-                $0.date = Date()
+            let request = NSFetchRequest<Folder>(entityName: "Folder")
+            request.predicate = NSPredicate(format: "id == %@", folderModel.id)
+            if (try coreManager.viewContext.fetch(request).first) != nil {
+                try coreManager.deleteFolder(id: folderModel.id)
+                loadFolders()
             }
-            loadFolder()
         } catch {
             handleError(error)
         }
     }
     
-    // Delete
-    func deleteFolder(_ folder: Folder) {
-        do {
-            try coreManager.deleteDB(folder)
-            loadFolder()
-        } catch {
-            handleError(error)
-        }
-    }
-    
-    // error
-    func handleError (_ error: Error) {
+    private func handleError(_ error: Error) {
         errorMessage = error.localizedDescription
         showError = true
     }

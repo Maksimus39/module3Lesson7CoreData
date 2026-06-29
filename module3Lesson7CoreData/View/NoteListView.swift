@@ -2,7 +2,7 @@ import SwiftUI
 
 
 struct NoteListView: View {
-    let folder: Folder
+    let folderModel: FolderModel
     
     @State private var viewModel: NoteListViewModel
     
@@ -14,10 +14,10 @@ struct NoteListView: View {
     @State private var editingNoteId: String? = nil
     @State private var editingNoteText = ""
     
-    init(folder: Folder) {
-        self.folder = folder
-        let vm = NoteListViewModel(folder: folder)
-        self._viewModel = State(wrappedValue: vm)
+    init(folderModel: FolderModel) {
+        self.folderModel = folderModel
+        _ = NoteListViewModel(folder: folderModel)
+        self._viewModel = State(wrappedValue: Assembly.createNoteListViewModel(folder: folderModel))
     }
     
     var body: some View {
@@ -25,10 +25,10 @@ struct NoteListView: View {
             ForEach(viewModel.notes) { note in
                 HStack {
                     VStack(alignment: .leading) {
-                        Text(note.text ?? "")
+                        Text(note.text)
                             .font(.body)
                         
-                        if let imageName = note.image,
+                        if let imageName = note.imageFileName,
                            let uiImage = StorageManager.shared.loadImage(fileName: imageName) {
                             Image(uiImage: uiImage)
                                 .resizable()
@@ -48,7 +48,7 @@ struct NoteListView: View {
                     
                     Button {
                         editingNoteId = note.id
-                        editingNoteText = note.text ?? ""
+                        editingNoteText = note.text
                         isEditingNote = true
                     } label: {
                         Label("Изменить", systemImage: "pencil")
@@ -57,7 +57,7 @@ struct NoteListView: View {
                 }
             }
         }
-        .navigationTitle(folder.name ?? "Задачи")
+        .navigationTitle(folderModel.name)
         .toolbar {
             ToolbarItem(placement: .navigationBarTrailing) {
                 Button(action: {
@@ -93,7 +93,7 @@ struct NoteListView: View {
                     if let data = noteImageData {
                         imageName = StorageManager.shared.saveImage(data: data)
                     }
-                    viewModel.addNote(text: newNoteText, image: imageName)
+                    viewModel.addNote(text: newNoteText, imageFileName: imageName)
                     newNoteText = ""
                     noteImageData = nil
                     isAddingNote = false

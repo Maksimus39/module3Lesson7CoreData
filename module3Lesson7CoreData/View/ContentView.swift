@@ -2,7 +2,7 @@ import SwiftUI
 
 
 struct ContentView: View {
-    @State private var viewModel = ContentViewModel()
+    @State private var viewModel = Assembly.createContentViewModel()
     
     // Флаги и данные для создания
     @State private var isAddingFolder = false
@@ -17,12 +17,12 @@ struct ContentView: View {
         NavigationStack {
             List {
                 ForEach(viewModel.folders) { folder in
-                    NavigationLink(destination: NoteListView(folder: folder)) {
+                    NavigationLink(destination: NoteListView(folderModel: folder)) {
                         HStack {
                             VStack(alignment: .leading) {
-                                Text(folder.name ?? "Без названия")
+                                Text(folder.name)
                                     .font(.headline)
-                                Text("\(folder.notes?.count ?? 0) задач")
+                                Text("Задачи")
                                     .font(.caption)
                                     .foregroundColor(.gray)
                             }
@@ -40,7 +40,7 @@ struct ContentView: View {
                         
                         Button {
                             editingFolderId = folder.id
-                            editingFolderName = folder.name ?? ""
+                            editingFolderName = folder.name
                             isEditingFolder = true
                         } label: {
                             Label("Изменить", systemImage: "pencil")

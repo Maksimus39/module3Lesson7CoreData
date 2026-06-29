@@ -1,41 +1,28 @@
 import Foundation
 import Observation
-import CoreData
 
 
 
-protocol NoteListViewModelProtocol: AnyObject {
-    func addNote(text: String, image: String?)
-    func loadNotes()
-    func updateNote(_ note: Note, newText: String, newImage: String?)
-    func deleteNote(_ note: Note)
-}
 
-
-@Observable final class NoteListViewModel: NoteListViewModelProtocol {
+@Observable final class NoteListViewModel {
     private let coreManager: CoreManager
-    private let folder: Folder
     
-    var notes: [Note] = []
+    private let folderId: String
+    
+    var notes: [NoteModel] = []
     var errorMessage: String?
     var showError: Bool = false
     
-    init(folder: Folder, coreManager: CoreManager = .shared) {
-        self.folder = folder
+    init(folder: FolderModel, coreManager: CoreManager = .shared) {
+        self.folderId = folder.id
         self.coreManager = coreManager
         loadNotes()
     }
     
     // Create
-    func addNote(text: String, image: String? = nil) {
+    func addNote(text: String, imageFileName: String?) {
         do {
-            _ = try coreManager.createDB(Note.self) {
-                $0.id = UUID().uuidString
-                $0.text = text
-                $0.image = image
-                $0.date = Date().description
-                $0.folder = self.folder
-            }
+            try coreManager.createNote(text: text, imageFileName: imageFileName, folderId: folderId)
             loadNotes()
         } catch {
             handleError(error)
@@ -45,47 +32,33 @@ protocol NoteListViewModelProtocol: AnyObject {
     // Read
     func loadNotes() {
         do {
-            let predicate = NSPredicate(format: "folder == %@", folder)
-            let sortDescriptor = NSSortDescriptor(keyPath: \Note.date, ascending: false)
-            
-            notes = try coreManager.fetchDB(Note.self, predicate: predicate, sortDescriptor: sortDescriptor)
+            notes = try coreManager.fetchNotes(forFolderId: folderId)
         } catch {
             handleError(error)
         }
     }
     
     // Update
-    func updateNote(_ note: Note, newText: String, newImage: String? = nil) {
+    func updateNoteText(_ noteModel: NoteModel, newText: String) {
         do {
-            try coreManager.updateDB(note) {
-                $0.text = newText
-                if let image = newImage {
-                    $0.image = image
-                }
-                $0.date = Date().description
-            }
+            try coreManager.updateNoteText(noteId: noteModel.id, newText: newText)
             loadNotes()
         } catch {
             handleError(error)
         }
-    }
-    
-    // Update Note Text 
-    func updateNoteText(_ note: Note, newText: String) {
-        updateNote(note, newText: newText, newImage: note.image)
     }
     
     // Delete
-    func deleteNote(_ note: Note) {
+    func deleteNote(_ noteModel: NoteModel) {
         do {
-            try coreManager.deleteDB(note)
+            try coreManager.deleteNote(noteId: noteModel.id)
             loadNotes()
         } catch {
             handleError(error)
         }
     }
     
-    func handleError(_ error: Error) {
+    private func handleError(_ error: Error) {
         errorMessage = error.localizedDescription
         showError = true
     }

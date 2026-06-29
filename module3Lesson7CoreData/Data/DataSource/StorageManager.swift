@@ -11,7 +11,7 @@ class StorageManager {
         FileManager.default.urls(for: .documentDirectory, in: .userDomainMask).first!
     }
     
-    // Сохраняем Data и возвращаем имя файла для записи в CoreData
+    
     func saveImage(data: Data) -> String? {
         let fileName = UUID().uuidString + ".jpeg"
         let fileURL = documentsPath.appendingPathComponent(fileName)
@@ -25,7 +25,7 @@ class StorageManager {
         }
     }
     
-    // Загружаем Data по имени файла
+   
     func loadImage(fileName: String?) -> UIImage? {
         guard let fileName = fileName else { return nil }
         let fileURL = documentsPath.appendingPathComponent(fileName)
